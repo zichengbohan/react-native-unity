@@ -20,12 +20,26 @@ def safeExtGet(prop, fallback) {
 
 android {
     compileSdkVersion safeExtGet('ReactNativeUnity_compileSdkVersion', 31)
+    def isNewArchitectureEnabled() {
+        return project.hasProperty("newArchEnabled") && project.newArchEnabled == "true"
+    }
     defaultConfig {
         minSdkVersion safeExtGet('ReactNativeUnity_minSdkVersion', 21)
         targetSdkVersion safeExtGet('ReactNativeUnity_targetSdkVersion', 31)
         versionCode 1
         versionName "1.0"
+        buildConfigField("boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString())
 
+
+    }
+    sourceSets {
+        main {
+            if (isNewArchitectureEnabled()) {
+                java.srcDirs += ["src/fabric/java"]
+            } else {
+                java.srcDirs += ["src/paper/java"]
+            }
+        }
     }
 
     buildTypes {
